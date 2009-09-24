@@ -53,6 +53,21 @@ class Books():
                     },
                 ]
         },
+        {
+            'single':
+                [
+                    {
+                        'id': 11,
+                        'name': 'Аксиология личностного бытия',
+                        'author': 'В. П. Барышков',
+                        'descr': '''В монографии исследуются онтологические основания ценностного отношения.
+                        Предмет исследования — личностное бытие как область формирования и функционирования
+                        ценностных смыслов. Рассматриваются субстациональная и коммуникативная концепции
+                        ценностного мира человека. Для научных работников, преподавателей философии
+                        и студентов вузов'''
+                    },
+                ]
+        }
     ]
 
     current_ver = '1.0.2'
@@ -112,7 +127,7 @@ class Books():
         count = len(categories)
         res = ''
         for category in categories:
-            res += urlencode({'NAME' + str(i): category[0], 'ID' + str(i): i})
+            res += '&' + urlencode({'NAME' + str(i): category[0], 'ID' + str(i): i})
             i += 1
         return res, count
 
@@ -144,7 +159,7 @@ def index(cmd = '', ver = 0, new = 0, isfinal = 0, pid = -1, bid = 0):
             return 'ERROR: ISFINAL should be 1 or 0'
         
 
-        return 'COUNT=%d&%s' % (count, res)
+        return 'ELCOUNT=%d%s' % (count, res)
     # <<
 
     # >> BOOK
