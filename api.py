@@ -2,6 +2,7 @@
 
 import re
 import hashlib
+import pprint
 from urllib import urlencode
 
 class Books():
@@ -99,9 +100,10 @@ class Books():
         for book in self.books:
             b.extend([book[k] for k in book.keys()])
 
-        for one_book in b[0]:
-            if one_book['id'] == self.bid:
-                res = one_book
+        for book_shelf in b:
+            for one_book in book_shelf:
+                if one_book['id'] == self.bid:
+                    res = one_book
 
         return res
 
@@ -110,6 +112,7 @@ class Books():
         if self.pid == -1: raise Exception('ERROR: specify subcategory id (pid)')
         res = ''
         count = 0
+
         if self.pid>=0 and self.pid in range(len(self.books)):
             book = [self.books[self.pid][k] for k in self.books[self.pid].keys()]
             book = book[0]
@@ -124,16 +127,31 @@ class Books():
         #show categories
         i = 0
         categories = [k.keys() for k in self.books]
-        count = len(categories)
+
+        #directories + books
+        elcount = len(categories)
+
+        # directoies
+        count = elcount
+        
         res = ''
         for category in categories:
-            res += '&' + urlencode({'NAME' + str(i): category[0], 'ID' + str(i): i})
+            if (category[0] == 'single'):
+            # we have single books
+                count -= 1
+
+            else:
+                res += '&' + urlencode({'NAME' + str(i): category[0], 'ID' + str(i): i})
             i += 1
-        return res, count
+
+        res += '&' + urlencode({'NAME' + str(i): 'Аксиология личностного бытия', 'ID' + str(i): 11})
+
+        return res, count, elcount
 
 def index(cmd = '', ver = 0, new = 0, isfinal = 0, pid = -1, bid = 0):
 
     cmd = cmd.upper()
+    bid = int(bid)
     count = 0
 
     books = Books(ver, bid, isfinal, pid)
@@ -152,25 +170,26 @@ def index(cmd = '', ver = 0, new = 0, isfinal = 0, pid = -1, bid = 0):
 
         if isfinal == 1:
             res, count = books.get_category_books()
+            return 'COUNT=%d%s' % (count, res)
 
         elif isfinal == 0:
-            res, count = books.get_categories()
+            res, count, elcount = books.get_categories()
+            return 'ELCOUNT=%d&COUNT=%d%s' % (elcount, count, res)
         else:
             return 'ERROR: ISFINAL should be 1 or 0'
         
 
-        return 'ELCOUNT=%d%s' % (count, res)
+        
     # <<
 
     # >> BOOK
     elif cmd == 'BOOK':
         ver_is_valid = books.check_ver()
         if ver_is_valid <> 1: return ver_is_valid
-
         if not bid: return 'ERROR: no book id (bid) found'
-        bid = int(bid)
-        res =  urlencode(books.book_by_id())
-            
+
+        res = urlencode(books.book_by_id())
+
         return 'BID=' + str(bid) + '%s' % res
     # <<
 
