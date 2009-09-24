@@ -116,7 +116,7 @@ class Books():
             count = len(book)
             i = 0
             for b in book:
-                res += urlencode({'NAME' + str(i): b['name'], 'ID' + str(i): b['id'], })
+                res += '&' + urlencode({'NAME' + str(i): b['name'], 'ID' + str(i): b['id'], })
                 i += 1
         return res, count
 
