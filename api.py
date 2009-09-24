@@ -2,7 +2,6 @@
 
 import re
 import hashlib
-import pprint
 from urllib import urlencode
 
 class Books():
@@ -195,13 +194,12 @@ def index(cmd = '', ver = 0, new = 0, isfinal = 0, pid = -1, bid = 0):
 
     # >> GET
     elif cmd == 'GET':
-        ver_is_valid = check_ver(ver)
+        ver_is_valid = books.check_ver()
         if ver_is_valid <> 1: return ver_is_valid
 
         if not bid: return 'ERROR: no book id (bid) found'
-        bid = int(bid)
 
-        res = urlencode(book_by_id(bid))
+        res = urlencode(books.book_by_id())
 
         if not len(res): return 'ERROR: no such book'
 
@@ -211,7 +209,7 @@ def index(cmd = '', ver = 0, new = 0, isfinal = 0, pid = -1, bid = 0):
     # << 
 
     elif cmd == 'REG':
-        ver_is_valid = check_ver(ver)
+        ver_is_valid = books.check_ver()
         if ver_is_valid <> 1: return ver_is_valid
 
         return 'LOGIN=footren&pass=v324jzrn'
