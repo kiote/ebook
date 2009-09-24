@@ -51,11 +51,23 @@ class Books():
     подробностей очередного громкого убийства молодой кинозвезды. И вдруг она с ужасом
     обнаруживает, что за ней кто-то следит...'''
                     },
+                    {
+                        'Маниакальный детектив':
+                            [
+                                {
+                                    'id': 10,
+                                    'name': 'Садобник-убийца',
+                                    'author': 'Моэз Фернандез',
+                                    'descr': '''Полная загадок и тайн книга, читатель до самого
+                                    конца не догадывается, кто же все-таки убийца'''
+                                }
+                            ]
+                    },
                 ]
         },
     ]
 
-    current_ver = '1.0.1'
+    current_ver = '1.0.2'
 
     def __init__(self, ver, bid = 0, isfinal = 0, pid = -1):
         self.ver = ver
@@ -144,7 +156,7 @@ def index(cmd = '', ver = 0, new = 0, isfinal = 0, pid = -1, bid = 0):
             return 'ERROR: ISFINAL should be 1 or 0'
         
 
-        return 'COUNT=%d%s' % (count, res)
+        return 'COUNT=%d&%s' % (count, res)
     # <<
 
     # >> BOOK
