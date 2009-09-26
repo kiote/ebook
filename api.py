@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from wave import Error
 import re
 import hashlib
 from urllib import urlencode
@@ -81,14 +82,14 @@ class Books():
     def check_ver(self):
         '''validates version'''
         # version does not setted at all
-        if not self.ver: raise Exception('ERROR: VER is empty')
+        if not self.ver: raise Exception('VER is empty', 1)
 
         matches = re.compile('^([0-9]{1})\.([0-9]{1})\.([0-9]{1})$').findall(self.ver)
 
         # version does not match pattern N.N.N
-        if matches == []: return 'ERROR: VER is invaild'
+        if matches == []: raise Exception('VER is invaild', 2)
 
-        if self.ver <> self.current_ver: raise Exception('ERROR: this VER is not supported')
+        if self.ver <> self.current_ver: raise Exception('this VER is not supported', 3)
 
         return True
 
@@ -104,11 +105,13 @@ class Books():
                 if one_book['id'] == self.bid:
                     res = one_book
 
+        if (not isinstance(res, dict)): raise Exception('Book information error, dosen\'t exisits?', 5)
+
         return res
 
     def get_category_books(self):
         # show books in category
-        if self.pid == -1: raise Exception('ERROR: specify subcategory id (pid)')
+        if self.pid == -1: raise Exception('specify subcategory id (pid)', 4)
         res = ''
         count = 0
 
@@ -155,12 +158,15 @@ def index(cmd = '', ver = 0, new = 0, isfinal = 0, pid = -1, bid = 0):
 
     books = Books(ver, bid, isfinal, pid)
 
+    try:
+        books.check_ver()
+    except Exception as ex:
+        error, code = ex
+        return urlencode({'MESSAGE': error, 'CODE': code})
+
     # >> LIST
     if cmd == 'LIST':
         
-        ver_is_valid = books.check_ver()
-        if ver_is_valid <> 1: return ver_is_valid
-
         # check isfinal
         if not isfinal: return 'ERROR: ISFINAL is empty'
 
@@ -183,23 +189,27 @@ def index(cmd = '', ver = 0, new = 0, isfinal = 0, pid = -1, bid = 0):
 
     # >> BOOK
     elif cmd == 'BOOK':
-        ver_is_valid = books.check_ver()
-        if ver_is_valid <> 1: return ver_is_valid
-        if not bid: return 'ERROR: no book id (bid) found'
 
-        res = urlencode(books.book_by_id())
+        if not bid: return 'ERROR: no book id (bid) found'
+        
+        try:
+            res = urlencode(books.book_by_id())
+        except Exception as ex:
+            error, code = ex
+            return urlencode({'MESSAGE': error, 'CODE': code})
 
         return 'BID=' + str(bid) + '%s' % res
     # <<
 
     # >> GET
     elif cmd == 'GET':
-        ver_is_valid = books.check_ver()
-        if ver_is_valid <> 1: return ver_is_valid
-
         if not bid: return 'ERROR: no book id (bid) found'
 
-        res = urlencode(books.book_by_id())
+        try:
+            res = urlencode(books.book_by_id())
+        except Exception as ex:
+            error, code = ex
+            return urlencode({'MESSAGE': error, 'CODE': code})
 
         if not len(res): return 'ERROR: no such book'
 
@@ -209,13 +219,8 @@ def index(cmd = '', ver = 0, new = 0, isfinal = 0, pid = -1, bid = 0):
     # << 
 
     elif cmd == 'REG':
-        ver_is_valid = books.check_ver()
-        if ver_is_valid <> 1: return ver_is_valid
-
         return 'LOGIN=footren&pass=v324jzrn'
 
-        return 'REG'
-    
     else:
         return 'ERROR'
     
