@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from wave import Error
 import re
 import hashlib
 from urllib import urlencode
@@ -105,13 +104,13 @@ class Books():
                 if one_book['id'] == self.bid:
                     res = one_book
 
-        if (not isinstance(res, dict)): raise Exception('Book information error, dosen\'t exisits?', 5)
+        if (not isinstance(res, dict)): raise Exception('Book information error, dosen\'t exisits?', 4)
 
         return res
 
     def get_category_books(self):
         # show books in category
-        if self.pid == -1: raise Exception('specify subcategory id (pid)', 4)
+        if self.pid == -1: raise Exception('specify subcategory id (pid)', 5)
         res = ''
         count = 0
 
@@ -160,15 +159,14 @@ def index(cmd = '', ver = 0, new = 0, isfinal = 0, pid = -1, bid = 0):
 
     try:
         books.check_ver()
-    except Exception as ex:
-        error, code = ex
+    except Exception, (error, code):
         return urlencode({'MESSAGE': error, 'CODE': code})
 
     # >> LIST
     if cmd == 'LIST':
         
         # check isfinal
-        if not isfinal: return 'ERROR: ISFINAL is empty'
+        if not isfinal: return urlencode({'MESSAGE': 'ISFINAL is empty', 'CODE': 6})
 
         isfinal = int(isfinal)
         res = ''
@@ -181,21 +179,17 @@ def index(cmd = '', ver = 0, new = 0, isfinal = 0, pid = -1, bid = 0):
             res, count, elcount = books.get_categories()
             return 'ELCOUNT=%d&COUNT=%d%s' % (elcount, count, res)
         else:
-            return 'ERROR: ISFINAL should be 1 or 0'
-        
-
-        
+            return urlencode({'MESSAGE': 'ISFINAL should be 1 or 0', 'CODE': 7})
     # <<
 
     # >> BOOK
     elif cmd == 'BOOK':
 
-        if not bid: return 'ERROR: no book id (bid) found'
+        if not bid: return urlencode({'MESSAGE': 'no book id (bid) found', 'CODE': 8})
         
         try:
             res = urlencode(books.book_by_id())
-        except Exception as ex:
-            error, code = ex
+        except Exception, (error, code):
             return urlencode({'MESSAGE': error, 'CODE': code})
 
         return 'BID=' + str(bid) + '%s' % res
@@ -203,24 +197,21 @@ def index(cmd = '', ver = 0, new = 0, isfinal = 0, pid = -1, bid = 0):
 
     # >> GET
     elif cmd == 'GET':
-        if not bid: return 'ERROR: no book id (bid) found'
+        if not bid: return urlencode({'MESSAGE': 'no book id (bid) found', 'CODE': 8})
 
         try:
             res = urlencode(books.book_by_id())
-        except Exception as ex:
-            error, code = ex
+        except Exception, (error, code):
             return urlencode({'MESSAGE': error, 'CODE': code})
-
-        if not len(res): return 'ERROR: no such book'
 
         bidded_link = hashlib.md5(res+'salt').hexdigest()
 
-        return 'LINK=' + bidded_link
+        return urlencode({'http://wwww.site.com/GET': bidded_link})
     # << 
 
     elif cmd == 'REG':
-        return 'LOGIN=footren&pass=v324jzrn'
+        return 'LOGIN=footren&PASS=v324jzrn'
 
     else:
-        return 'ERROR'
+        return urlencode({'MESSAGE': 'unknown command', 'CODE': 9})
     
