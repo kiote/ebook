@@ -16,8 +16,8 @@ def index(fname = ''):
         return urlencode({'MESSAGE': 'get is empty', 'CODE': 10})
         
     if fname in book_links:
-        with open(path + '/' + book_links[fname]) as file:
-            content = file.readlines()
+        f = open(path + '/' + book_links[fname], 'r')
+        content = f.readlines()
         return ''.join(content)
         
     else:
