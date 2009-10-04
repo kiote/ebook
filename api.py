@@ -206,7 +206,7 @@ def index(cmd = '', ver = 0, new = 0, isfinal = 0, pid = -1, bid = 0):
 
         bidded_link = hashlib.md5(res+'salt').hexdigest()
 
-        return urlencode({'http://wwww.bugtest.ru/GET': bidded_link})
+        return urlencode({'http://wwww.bugtest.ru/get.py?fname=': bidded_link})
     # << 
 
     elif cmd == 'REG':
