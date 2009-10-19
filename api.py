@@ -143,7 +143,7 @@ class Books():
 
             else:
                 res += '&' + urlencode({'NAME' + str(i): category[0], 'ID' + str(i): i})
-            i += 1
+                i += 1
 
         res += '&' + urlencode({'NAME' + str(i): 'Аксиология личностного бытия', 'ID' + str(i): 11})
 
@@ -173,7 +173,7 @@ def index(cmd = '', ver = 0, new = 0, isfinal = 0, pid = -1, bid = 0):
 
         if isfinal == 1:
             res, count = books.get_category_books()
-            return 'COUNT=%d%s' % (count, res)
+            return 'ELCOUNT=%d%s' % (count, res)
 
         elif isfinal == 0:
             res, count, elcount = books.get_categories()
